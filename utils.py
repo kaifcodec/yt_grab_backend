@@ -1,25 +1,25 @@
 import re
-import yt_dlp
-import os
-from uuid import uuid4
+from pytube import YouTube
 
 def is_valid_youtube_url(url):
-    pattern = re.compile(
-        r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/'
-        r'(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
-    return bool(pattern.match(url))
+    youtube_regex = (
+        r'(https?://)?(www\.)?'
+        '(youtube|youtu|youtube-nocookie)\.(com|be)/'
+        '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
+    return re.match(youtube_regex, url) is not None
 
-def download_video(url):
-    video_id = str(uuid4())
-    output_path = f"{video_id}.mp4"
-
-    ydl_opts = {
-        'format': 'best',
-        'outtmpl': output_path,
-        'quiet': True
+def get_video_info(url):
+    yt = YouTube(url)
+    return {
+        "title": yt.title,
+        "length": yt.length,
+        "author": yt.author,
+        "views": yt.views,
+        "thumbnail_url": yt.thumbnail_url
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-
+def download_video(url):
+    yt = YouTube(url)
+    stream = yt.streams.get_highest_resolution()
+    output_path = stream.download()
     return output_path
