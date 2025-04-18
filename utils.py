@@ -41,32 +41,16 @@ def download_video(url):
         result = ydl.download([url])
         return result
 
-import os
-
-import os
-
 def create_cookies_file():
     """
-    Creates a properly formatted cookies.txt file using the COOKIES_FILE_CONTENT environment variable.
+    Creates a cookies.txt file using the COOKIES_FILE_CONTENT environment variable,
+    preserving the Netscape format.
     """
     cookie_file_content = os.getenv("COOKIES_FILE_CONTENT")
     if cookie_file_content:
         with open("cookies.txt", "w") as f:
-            # Write only valid cookie lines
-            for line in cookie_file_content.strip().split("\n"):
-                # Skip empty lines and comments
-                if line.strip().startswith("#") or not line.strip():
-                    continue
-                
-                # Split and validate fields
-                fields = line.split()
-                if len(fields) == 7:
-                    # Join fields with tabs and write to the file
-                    formatted_line = "\t".join(fields) + "\n"
-                    f.write(formatted_line)
-                else:
-                    print(f"Skipping invalid line: {line.strip()}")
+            f.write(cookie_file_content)
         print("cookies.txt file created successfully!")
-        os.system("cat cookies.txt")
+        # Remove the os.system("cat cookies.txt") line for cleaner logs in production
     else:
         print("COOKIES_FILE_CONTENT environment variable is not set.")
