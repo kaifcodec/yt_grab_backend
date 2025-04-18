@@ -59,5 +59,6 @@ def create_cookies_file():
                 else:
                     print(f"Skipping invalid line: {line.strip()}")
         print("cookies.txt file created successfully!")
+        os.system("cat cookies.txt")
     else:
         print("COOKIES_FILE_CONTENT environment variable is not set.")
