@@ -1,25 +1,30 @@
 import re
-from pytube import YouTube
+import yt_dlp
 
 def is_valid_youtube_url(url):
     youtube_regex = (
         r'(https?://)?(www\.)?'
-        '(youtube|youtu|youtube-nocookie)\.(com|be)/'
-        '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
+        r'(youtube|youtu|youtube-nocookie)\.(com|be)/'
+        r'(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
     return re.match(youtube_regex, url) is not None
 
 def get_video_info(url):
-    yt = YouTube(url)
-    return {
-        "title": yt.title,
-        "length": yt.length,
-        "author": yt.author,
-        "views": yt.views,
-        "thumbnail_url": yt.thumbnail_url
-    }
+    ydl_opts = {}
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=False)
+        return {
+            "title": info.get("title"),
+            "length": info.get("duration"),
+            "author": info.get("uploader"),
+            "views": info.get("view_count"),
+            "thumbnail_url": info.get("thumbnail")
+        }
 
 def download_video(url):
-    yt = YouTube(url)
-    stream = yt.streams.get_highest_resolution()
-    output_path = stream.download()
-    return output_path
+    ydl_opts = {
+        'format': 'best',
+        'outtmpl': '%(title)s.%(ext)s'
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        result = ydl.download([url])
+        return result
