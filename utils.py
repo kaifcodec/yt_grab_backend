@@ -10,8 +10,12 @@ def is_valid_youtube_url(url):
     return re.match(youtube_regex, url) is not None
 
 def get_video_info(url):
+    """
+    Extracts video metadata using yt-dlp with cookies.txt for authentication.
+    Assumes cookies.txt is located in the root directory of the repository.
+    """
     ydl_opts = {
-        'cookiefile': 'cookies.txt'  # Use cookies from the cookies.txt file
+        'cookiefile': 'cookies.txt'  # Directly use cookies.txt from the root directory
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
@@ -24,10 +28,14 @@ def get_video_info(url):
         }
 
 def download_video(url):
+    """
+    Downloads a video using yt-dlp, authenticating with cookies.txt.
+    """
     ydl_opts = {
         'format': 'best',
         'outtmpl': '%(title)s.%(ext)s',
-        'cookiefile': 'cookies.txt'  # Use cookies from the cookies.txt file
+        'cookiefile': 'cookies.txt',  # Points to the uploaded cookies.txt file
+        'verbose': True
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         result = ydl.download([url])
