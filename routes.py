@@ -1,8 +1,11 @@
 from flask import Blueprint, request, jsonify, send_file
-from utils import is_valid_youtube_url, download_video, get_video_info
+from utils import is_valid_youtube_url, download_video, get_video_info, create_cookies_file
 import os
 
 api = Blueprint('api', __name__)
+
+# Create cookies.txt file on startup
+create_cookies_file()
 
 @api.route('/download', methods=['POST'])
 def download():
