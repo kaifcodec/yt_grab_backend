@@ -35,6 +35,8 @@ def download_video(url):
 
 import os
 
+import os
+
 def create_cookies_file():
     """
     Creates a properly formatted cookies.txt file using the COOKIES_FILE_CONTENT environment variable.
@@ -42,14 +44,13 @@ def create_cookies_file():
     cookie_file_content = os.getenv("COOKIES_FILE_CONTENT")
     if cookie_file_content:
         with open("cookies.txt", "w") as f:
-            # Add the Netscape cookie file header
-            f.write("# Netscape HTTP Cookie File\n")
-            f.write("# http://curl.haxx.se/rfc/cookie_spec.html\n")
-            f.write("# This is a generated file! Do not edit.\n\n")
-            
-            # Split the content into lines and ensure proper formatting
+            # Write only valid cookie lines
             for line in cookie_file_content.strip().split("\n"):
-                # Remove extra spaces and ensure fields are separated by tabs
+                # Skip empty lines and comments
+                if line.strip().startswith("#") or not line.strip():
+                    continue
+                
+                # Split and validate fields
                 fields = line.split()
                 if len(fields) == 7:
                     # Join fields with tabs and write to the file
